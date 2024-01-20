@@ -11,6 +11,5 @@ public class FTBSkiesCreateClient {
             .factory(LiquidCrystallizerRotatingInstance::new)
             .skipRender(be -> true)
             .apply();
-
     }
 }

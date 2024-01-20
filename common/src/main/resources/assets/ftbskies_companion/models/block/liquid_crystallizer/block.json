@@ -2,9 +2,9 @@
     "credit": "Made with Blockbench",
     "parent": "block/block",
     "textures": {
-        "0": "create:block/gearbox",
-        "5": "create:block/millstone",
-        "particle": "minecraft:block/copper_block"
+        "0": "ftbskies_companion:block/gearbox",
+        "5": "ftbskies_companion:block/liquid_crystallizer",
+        "particle": "botania:block/mana_diamond_block"
     },
     "elements": [
         {

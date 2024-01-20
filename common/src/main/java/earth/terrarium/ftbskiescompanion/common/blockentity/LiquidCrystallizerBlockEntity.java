@@ -4,10 +4,8 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.utility.VecHelper;
 import earth.terrarium.botarium.common.fluid.FluidConstants;
-import earth.terrarium.botarium.common.fluid.base.FluidContainer;
 import earth.terrarium.botarium.common.fluid.base.FluidHolder;
 import earth.terrarium.botarium.common.fluid.impl.InsertOnlyFluidContainer;
-import earth.terrarium.botarium.common.fluid.impl.SimpleFluidContainer;
 import earth.terrarium.botarium.common.item.SerializableContainer;
 import earth.terrarium.botarium.common.item.SimpleItemContainer;
 import earth.terrarium.botarium.common.fluid.base.BotariumFluidBlock;
@@ -28,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import vazkii.botania.api.mana.ManaReceiver;
+import vazkii.botania.common.block.block_entity.mana.ManaPoolBlockEntity;
 import vazkii.botania.xplat.XplatAbstractions;
 
 public class LiquidCrystallizerBlockEntity extends KineticBlockEntity implements ItemContainerBlock, BotariumFluidBlock<WrappedBlockFluidContainer>, ManaReceiver {
@@ -137,11 +136,11 @@ public class LiquidCrystallizerBlockEntity extends KineticBlockEntity implements
         if (this.fluidContainer == null) {
             this.fluidContainer = new WrappedBlockFluidContainer(this, new InsertOnlyFluidContainer((ignored) -> FluidConstants.toMillibuckets(4000), 1, (slot, holder) -> true));
         }
-        return fluidContainer;
+        return direction == Direction.UP ? fluidContainer : null;
     }
 
     public WrappedBlockFluidContainer getFluidContainer() {
-        return getFluidContainer(level, worldPosition, getBlockState(), this, null);
+        return getFluidContainer(level, worldPosition, getBlockState(), this, Direction.UP);
     }
 
     @Override
@@ -159,15 +158,19 @@ public class LiquidCrystallizerBlockEntity extends KineticBlockEntity implements
         return mana;
     }
 
+    public static int getMaxMana() {
+        return ManaPoolBlockEntity.MAX_MANA / 10;
+    }
+
     @Override
     public boolean isFull() {
-        return mana >= 1000;
+        return mana >= getMaxMana();
     }
 
     @Override
     public void receiveMana(int mana) {
         int old = this.mana;
-        this.mana = Math.max(0, Math.min(getCurrentMana() + mana, 1000));
+        this.mana = Math.max(0, Math.min(getCurrentMana() + mana, getMaxMana()));
         if (old != this.mana) {
             setChanged();
             sendData();
@@ -185,6 +188,7 @@ public class LiquidCrystallizerBlockEntity extends KineticBlockEntity implements
 
         compound.putInt("Mana", mana);
         compound.putInt("Timer", timer);
+        compound.put("FluidContainer", getFluidContainer().serialize(new CompoundTag()));
     }
 
     @Override
@@ -192,5 +196,6 @@ public class LiquidCrystallizerBlockEntity extends KineticBlockEntity implements
         super.read(compound, clientPacket);
         mana = compound.getInt("Mana");
         timer = compound.getInt("Timer");
+        getFluidContainer().deserialize(compound.getCompound("FluidContainer"));
     }
 }

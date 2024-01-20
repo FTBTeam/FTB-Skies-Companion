@@ -28,7 +28,7 @@ public class FTBSkiesCompanionForge {
     }
 
     public static void wrapUp(FMLCommonSetupEvent event) {
-        FTBStressProvider.BLOCKS.put(ModBlocks.LIQUID_CRYSTALLIZER.get(), new StressInfo(8.0, 1024, true, true, Couple.create(0, 1024)));
+        FTBSkiesCompanion.initStress();
     }
 
     public static void manaCaps(AttachCapabilitiesEvent<BlockEntity> event) {

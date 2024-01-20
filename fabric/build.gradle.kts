@@ -8,6 +8,12 @@ val common: Configuration by configurations.creating {
     configurations["developmentFabric"].extendsFrom(this)
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("net.fabricmc:fabric-loader:0.15.0")
+    }
+}
+
 dependencies {
     common(project(":common", configuration = "namedElements")) {
         isTransitive = false
@@ -22,11 +28,13 @@ dependencies {
     val modMenuVersion: String by project
     val createFabricVersion: String by project
     val reiVersion: String by project
+    val jeiVersion: String by project
     val patchouliVersion: String by project
 
     modImplementation(group = "net.fabricmc", name = "fabric-loader", version = fabricLoaderVersion)
     modApi(group = "net.fabricmc.fabric-api", name = "fabric-api", version = "$fabricApiVersion+$minecraftVersion")
-    modRuntimeOnly(group = "me.shedaniel", name = "RoughlyEnoughItems-fabric", version = reiVersion)
+    // modRuntimeOnly(group = "me.shedaniel", name = "RoughlyEnoughItems-fabric", version = reiVersion)
+    modImplementation(group = "mezz.jei", name = "jei-$minecraftVersion-forge", version = jeiVersion)
 
     modApi(group = "com.terraformersmc", name = "modmenu", version = modMenuVersion)
 
