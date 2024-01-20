@@ -1,0 +1,14 @@
+{
+    "type": "ftbskies_companion:crystallization",
+    "input": {
+        "ingredient": {
+            "fluid": "minecraft:water"
+        },
+        "amount": 1000
+    },
+    "mana": 200,
+    "processTime": 200,
+    "output": {
+        "id": "minecraft:ice"
+    }
+}

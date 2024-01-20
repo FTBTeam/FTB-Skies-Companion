@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "ftbskies_companion:block/liquid_crystallizer/block"
+        }
+    }
+}

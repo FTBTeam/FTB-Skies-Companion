@@ -1,0 +1,29 @@
+ {
+    "schemaVersion": 1,
+    "id": "ftbskies_companion",
+    "version": "${version}",
+    "name": "FTB Skies Companion",
+    "description": "the power of flowers and spinning",
+    "authors": ["CodexAdrian"],
+    "contributors": [""],
+    "contact": {
+        "website": "",
+        "repo": "",
+        "issues": ""
+    },
+    "license": "ARR",
+    "icon": "icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "earth.terrarium.ftbskiescompanion.fabric.FTBSkiesCompanionFabric::init"
+        ]
+    },
+    "depends": {
+        "fabric": "*",
+        "minecraft": ">=1.19.2",
+        "java": ">=17",
+        "resourcefullib": ">=1.1.24",
+        "botarium": ">=1.8.2"
+  }
+}

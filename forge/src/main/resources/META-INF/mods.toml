@@ -1,0 +1,43 @@
+modLoader = "javafml"
+loaderVersion = "[43,)"
+license = "ARR"
+issueTrackerURL = ""
+
+[[mods]]
+modId = "ftbskies_companion"
+version = "${version}"
+displayName = "FTB Skies Companion"
+displayURL = ""
+logoFile = "icon.png"
+authors = "CodexAdrian"
+credits = ""
+description = "the power of flowers and spinning things"
+
+[[dependencies.ftbskies_companion]]
+modId = "forge"
+mandatory = true
+versionRange = "[43,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.ftbskies_companion]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19.2,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.ftbskies_companion]]
+modId = "resourcefullib"
+mandatory = true
+versionRange = "[1.1.24,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.ftbskies_companion]]
+modId = "botarium"
+mandatory = true
+versionRange = "[1.9.0,)"
+ordering = "NONE"
+side = "BOTH"
+
