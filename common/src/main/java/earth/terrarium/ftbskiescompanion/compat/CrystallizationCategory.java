@@ -41,7 +41,7 @@ public class CrystallizationCategory extends CreateRecipeCategory<Crystallizatio
     public static CreateRecipeCategory.Info<CrystallizationRecipe> INFO = new CreateRecipeCategory.Info<>(
         CrystallizationCategory.RECIPE,
         Component.translatable("recipe.ftbskies_companion.crystallization"),
-        new EmptyBackground(177, 65),
+        new EmptyBackground(177, 59),
         new DoubleItemIcon(() -> ModItems.LIQUID_CRYSTALLIZER.get().getDefaultInstance(), Items.WATER_BUCKET::getDefaultInstance),
         () -> Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(ModRecipes.CRYSTALLIZATION_RECIPE_TYPE.get()),
         List.<Supplier<? extends ItemStack>>of(() -> ModItems.LIQUID_CRYSTALLIZER.get().getDefaultInstance())
@@ -74,6 +74,6 @@ public class CrystallizationCategory extends CreateRecipeCategory<Crystallizatio
         AllGuiTextures.JEI_ARROW.render(matrixStack, 85, 32);
         AllGuiTextures.JEI_DOWN_ARROW.render(matrixStack, 43, 4);
         millstone.draw(matrixStack, 48, 27);
-        HUDHandler.renderManaBar(matrixStack, 20, 50, 0x0000FF, 0.75F, recipe.mana(), LiquidCrystallizerBlockEntity.getMaxMana());
+        HUDHandler.renderManaBar(matrixStack, 15, 55, 0x0000FF, 0.75F, recipe.mana(), LiquidCrystallizerBlockEntity.getMaxMana());
     }
 }
