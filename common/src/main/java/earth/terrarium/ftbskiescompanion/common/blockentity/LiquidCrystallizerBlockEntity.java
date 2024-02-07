@@ -96,8 +96,8 @@ public class LiquidCrystallizerBlockEntity extends KineticBlockEntity implements
         if (stack.isEmpty()) {
             XplatAbstractions.INSTANCE.insertToInventory(level, getBlockPos(), null, lastRecipe.result().copy(), false);
             FluidHolder toExtract = holder.copyWithAmount(lastRecipe.input().getFluidAmount());
+            getFluidContainer().internalExtract(toExtract, false);
             mana -= lastRecipe.mana();
-            award(AllAdvancements.MILLSTONE);
         }
 
         sendData();
@@ -136,7 +136,7 @@ public class LiquidCrystallizerBlockEntity extends KineticBlockEntity implements
         if (this.fluidContainer == null) {
             this.fluidContainer = new WrappedBlockFluidContainer(this, new InsertOnlyFluidContainer((ignored) -> FluidConstants.toMillibuckets(4000), 1, (slot, holder) -> true));
         }
-        return direction == Direction.UP ? fluidContainer : null;
+        return direction == Direction.UP || direction == null ? fluidContainer : null;
     }
 
     public WrappedBlockFluidContainer getFluidContainer() {
@@ -188,7 +188,6 @@ public class LiquidCrystallizerBlockEntity extends KineticBlockEntity implements
 
         compound.putInt("Mana", mana);
         compound.putInt("Timer", timer);
-        compound.put("FluidContainer", getFluidContainer().serialize(new CompoundTag()));
     }
 
     @Override
@@ -196,6 +195,5 @@ public class LiquidCrystallizerBlockEntity extends KineticBlockEntity implements
         super.read(compound, clientPacket);
         mana = compound.getInt("Mana");
         timer = compound.getInt("Timer");
-        getFluidContainer().deserialize(compound.getCompound("FluidContainer"));
     }
 }
