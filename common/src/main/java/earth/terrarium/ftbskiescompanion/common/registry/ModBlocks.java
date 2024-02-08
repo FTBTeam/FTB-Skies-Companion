@@ -14,5 +14,5 @@ import java.util.function.Supplier;
 public class ModBlocks {
     public static final ResourcefulRegistry<Block> BLOCKS = ResourcefulRegistries.create(Registry.BLOCK, FTBSkiesCompanion.MOD_ID);
 
-    public static final Supplier<Block> LIQUID_CRYSTALLIZER = BLOCKS.register("liquid_crystallizer", () -> new LiquidCrystallizerBlock(Block.Properties.of(Material.WOOD).strength(2.0F).sound(SoundType.WOOD).noOcclusion()));
+    public static final Supplier<Block> LIQUID_CRYSTALLIZER = BLOCKS.register("liquid_crystallizer", () -> new LiquidCrystallizerBlock(Block.Properties.of(Material.METAL).strength(2.0F).sound(SoundType.METAL).noOcclusion()));
 }
