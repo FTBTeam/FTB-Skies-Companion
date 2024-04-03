@@ -192,7 +192,7 @@ publishMods {
         requires {slug = 'create' }
         requires {slug = 'flywheel' }
         requires {slug = 'botania' }
-        requires {slug = 'resourcefullib' }
+        requires {slug = 'resourceful-lib' }
         requires {slug = 'botarium' }
     }
 }
