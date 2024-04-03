@@ -1,0 +1,198 @@
+plugins {
+    id "dev.architectury.loom" version "1.5-SNAPSHOT"
+    id "maven-publish"
+    id "me.modmuss50.mod-publish-plugin" version "0.4.5"
+}
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
+// needs to be done AFTER version is set
+apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/publishing.gradle"
+
+loom {
+    // use this if you are using the official mojang mappings
+    // and want loom to stop warning you about their license
+    silentMojangMappingsLicense()
+    forge {}
+}
+
+repositories {
+    mavenLocal()
+
+    maven {
+        url "https://maven.tterrag.com/"
+        content {
+            includeGroup "com.simibubi.create"
+            includeGroup "com.jozufozu.flywheel"
+            includeGroup "com.tterrag.registrate"
+        }
+    }
+
+    maven {
+        url = "https://maven.resourcefulbees.com/repository/maven-public/"
+        content {
+            includeGroup "com.teamresourceful.resourcefullib"
+            includeGroup "com.teamresourceful"
+            includeGroup "earth.terrarium"
+        }
+    }
+
+    // Transitive dependencies support (Mek from resourceful lib)
+    maven {
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
+
+    maven {
+        url = "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+
+    maven {
+        url = "https://maven.blamejared.com"
+        content {
+            includeGroup "vazkii.botania"
+            includeGroup "mezz.jei"
+            includeGroup "vazkii.patchouli"
+        }
+    }
+
+    maven {
+        name = "Illusive Soulworks maven"
+        url = "https://maven.theillusivec4.top/"
+        content {
+            includeGroup "top.theillusivec4.curios"
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+
+    forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    modImplementation("com.simibubi.create:create-${minecraft_version}:${create_version}:all") { transitive = false }
+    modImplementation("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
+    modImplementation("com.tterrag.registrate:Registrate:MC1.19-1.1.5")
+    modImplementation("vazkii.botania:Botania:$botaniaVersion-FORGE") { transitive = false }
+
+    compileOnly("com.teamresourceful:yabn:1.0.3")
+    modApi("com.teamresourceful.resourcefullib:resourcefullib-forge-$minecraft_version:$resourcefulLibVersion")
+    modApi("earth.terrarium:botarium-forge-$minecraft_version:$botariumVersion")
+    modApi("mezz.jei:jei-$minecraft_version-forge-api:$jeiVersion")
+    modRuntimeOnly("mezz.jei:jei-$minecraft_version-forge:$jeiVersion")
+
+    modRuntimeOnly("top.theillusivec4.curios:curios-forge:$curiosVersion")
+    modRuntimeOnly("vazkii.patchouli:Patchouli:$minecraft_version-$patchouliVersion")
+}
+
+apply from: "https://raw.githubusercontent.com/FTBTeam/mods-meta/main/gradle/extra-local-mods.gradle"
+
+processResources {
+    // define properties that can be used during resource processing
+    inputs.property "version", project.version
+
+    // this will replace the property "${version}" in your mods.toml
+    // with the version you've defined in your gradle.properties
+    filesMatching("META-INF/mods.toml") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    options.release = 17
+}
+
+java {
+    withSourcesJar()
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : project.mod_id,
+                "Specification-Vendor"    : "FTB Team",
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : version,
+                "Implementation-Vendor"   : "FTB Team",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = project.archivesBaseName
+            version ftbPublishing.mavenVersion
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
+
+    repositories {
+        if (ftbPublishing.ftbToken) {
+            maven {
+                url ftbPublishing.ftbURL
+                credentials {
+                    username = ftbPublishing.ftbUser
+                    password = ftbPublishing.ftbToken
+                }
+            }
+        }
+
+        if (ftbPublishing.sapsToken) {
+            maven {
+                url ftbPublishing.sapsURL
+                credentials {
+                    username = ftbPublishing.sapsUser
+                    password = ftbPublishing.sapsToken
+                }
+            }
+        }
+    }
+}
+
+publishMods {
+    dryRun = providers.environmentVariable("CURSEFORGE_KEY").getOrNull() == null
+    changelog = providers.environmentVariable("CHANGELOG").getOrElse("No changelog provided")
+    version = "${mod_version}"
+
+    // TODO: Migrate to something else
+    def tag = providers.environmentVariable("TAG").getOrElse("release")
+    type = tag == "release" ? STABLE : (tag == "beta" ? BETA : ALPHA)
+
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_KEY")
+        projectId = "997287"
+
+        displayName = "[FORGE][${minecraft_version}] FTB Skies Companion ${mod_version}"
+        modLoaders.add("forge")
+        minecraftVersions.add("${minecraft_version}")
+
+        file = project.provider { project.tasks.remapJar }.flatMap { it.archiveFile }
+
+        requires {slug = 'create' }
+        requires {slug = 'flywheel' }
+        requires {slug = 'botania' }
+        requires {slug = 'resourcefullib' }
+        requires {slug = 'botarium' }
+    }
+}
